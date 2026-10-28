@@ -31,9 +31,9 @@ Quantos votos entraram depois das 17h no 2º turno de 2026 (25/10), quando o STF
 | 17h45 (padrão) | 7.352 (1,48%) | 5.052 | 0,11% |
 | 17h30 | 7.606 (1,53%) | 5.139 | 0,12% |
 | 17h15 | 9.079 (1,82%) | 5.621 | 0,13% |
-| 17h (todas as urnas) | 497.882 (100%) | 34.330 | 0,77% |
+| 17h (todas as urnas, sem o exterior) | 497.882 (100%) | 34.050 | 0,77% |
 
-Com corte às 17h entram todas as urnas, e a maior parte desses votos vem de eleitores que já estavam na fila às 17h, o que é permitido em qualquer eleição.
+O total conta votos estritamente depois das 17h e exclui o exterior. Com corte às 17h entram todas as urnas, e a maior parte desses votos vem de eleitores que já estavam na fila às 17h, o que é permitido em qualquer eleição.
 
 ## Método
 
@@ -69,9 +69,15 @@ Cobertura: 499.248 seções no arquivo de configuração do TSE; 72 sem log (70 
 ## Rodar
 
 ```sh
-uv run crawl.py          # todas as UFs, ou: uv run crawl.py rj sp
-python3 analisa.py       # gera secoes.csv e municipios.csv
+uv venv --python python3.15.exe .venv # cria ambiente virtual
+uv pip install --python .\\.venv\\Scripts\\python.exe -r requirements.txt # instala dependências no ambiente virtual
+
+uv run crawl.py          # todas as UFs, ou: uv run crawl.py rj sp (CUIDADO! demora muito!)
+.\\.venv\\Scripts\\python.exe analisa.py       # gera secoes.csv e municipios.csv
+.\\.venv\\Scripts\\python.exe gera_card_todas.py  # card novo, montado com dados do CSV e nome timestamp
 ```
+
+`gera_card_todas.py` desenha o card inteiro, sem usar `card.png` como imagem de fundo. As métricas são calculadas de `secoes.csv`; a única estatística fixa é a vantagem de Lula sobre Flávio, declarada na variável `VANTAGEM_LULA_FLAVIO`.
 
 O crawler limita a taxa (`RPS`, padrão 10 req/s) e retoma de onde parou. São ~1 milhão de requisições; numa conexão doméstica leva horas.
 

@@ -1,0 +1,3 @@
+# Dependência externa necessária para gera_card_todas.py.
+# crawl.py e analisa.py usam apenas a biblioteca padrão do Python.
+Pillow>=11.0
