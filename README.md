@@ -77,5 +77,5 @@ O crawler limita a taxa (`RPS`, padrão 10 req/s) e retoma de onde parou. São ~
 
 ## Arquivos
 
-- `secoes.csv`: uma linha por urna (fuso, abertura, encerramento, último voto, votos depois das 17h e das 17h20, total de votos, classe)
+- `secoes.csv`: uma linha por urna (fuso, abertura, encerramento, último voto, votos às/depois das 17h, votos estritamente depois das 17h e das 17h20, total de votos, classe)
 - `municipios.csv`: municípios com urnas estendidas

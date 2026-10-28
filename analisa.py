@@ -39,12 +39,13 @@ for r in vistos.values():
     enc = seg(r["encerramento"][-1]) - off * 3600
     tarde = [seg(t) - off * 3600 for t in r["votos_tarde"]]
     v17 = sum(t >= 17 * 3600 for t in tarde)
+    v17_estrito = sum(t > 17 * 3600 for t in tarde)
     v1720 = sum(t >= 17 * 3600 + 20 * 60 for t in tarde)
     cl = "estendida" if enc >= 17 * 3600 + 45 * 60 else "normal"
     porbuf[uf][cl] += 1
     linhas.append({"uf": uf.upper(), "cd_mun": r["cd_mun"], "municipio": r["municipio"], "zona": r["zona"], "secao": r["secao"],
                    "fuso_h": -off, "abertura_brt": hms(seg(r["pronta"][0]) - off * 3600), "encerramento_brt": hms(enc),
-                   "ultimo_voto_brt": hms(max(tarde)) if tarde else "", "votos_apos_17h": v17, "votos_apos_17h20": v1720,
+                   "ultimo_voto_brt": hms(max(tarde)) if tarde else "", "votos_apos_17h": v17, "votos_apos_17h_estrito": v17_estrito, "votos_apos_17h20": v1720,
                    "votos_total": r["votos"], "classe": cl})
 
 linhas.sort(key=lambda x: (x["uf"], x["municipio"], x["zona"], x["secao"]))
@@ -69,10 +70,11 @@ for x in linhas:
     a["est"] += e
     a["est_c17"] += e and x["votos_apos_17h"] > 0
     a["est_v17"] += x["votos_apos_17h"] if e else 0
+    a["v17_estrito_todas"] += x["votos_apos_17h_estrito"]
 agg["BR"] = sum(agg.values(), collections.Counter())
-print(f"{'UF':4}{'urnas':>8}{'estendidas':>17}{'c/ voto >17h':>14}{'votos >17h':>12}")
+print(f"{'UF':4}{'urnas':>8}{'estendidas':>17}{'c/ voto >17h':>14}{'votos >17h':>12}{'votos >17h todas':>18}")
 for uf, a in sorted(agg.items(), key=lambda kv: (kv[0] == "BR", -kv[1]["est"] / max(kv[1]["urnas"], 1))):
-    print(f"{uf:4}{a['urnas']:8}{a['est']:9} {100 * a['est'] / max(a['urnas'], 1):5.1f}%{a['est_c17']:14}{a['est_v17']:12}")
+    print(f"{uf:4}{a['urnas']:8}{a['est']:9} {100 * a['est'] / max(a['urnas'], 1):5.1f}%{a['est_c17']:14}{a['est_v17']:12}{a['v17_estrito_todas']:18}")
 
 with open(f"{DIR}/municipios.csv", "w", newline="") as f:
     w = csv.writer(f)
